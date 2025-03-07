@@ -40,3 +40,55 @@ public:
 #TC : O(min(log(m), log(n)) and SC : O(1)
 
 #LC(Q273)
+class Solution:
+    def numberToWords(self, num: int) -> str:
+        if num == 0:
+            return "Zero"
+        
+        scales = ["", "Thousand", "Million", "Billion"]
+        groups = []
+        while num > 0:
+            groups.append(num % 1000)
+            num = num // 1000
+        
+        groups = groups[::-1] 
+        result = []
+        
+        for i in range(len(groups)):
+            group = groups[i]
+            if group == 0:
+                continue
+            group_words = self.three_digits_to_words(group)
+            scale_index = len(groups) - 1 - i
+            scale = scales[scale_index]
+            if scale:
+                group_words += " " + scale
+            result.append(group_words)
+        
+        return ' '.join(result).strip()
+    
+    def three_digits_to_words(self, n: int) -> str:
+        if n == 0:
+            return ""
+        parts = []
+        hundreds = n // 100
+        remainder = n % 100
+        if hundreds > 0:
+            parts.append(self.ones[hundreds] + " Hundred")
+        if remainder > 0:
+            parts.append(self.two_digits_to_words(remainder))
+        return ' '.join(parts)
+    
+    def two_digits_to_words(self, n: int) -> str:
+        if n == 0:
+            return ""
+        if n < 20:
+            return self.ones[n]
+        tens_part = self.tens[n // 10]
+        ones_part = self.ones[n % 10]
+        return tens_part + (" " + ones_part if ones_part else "")
+    
+    ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+            "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen",
+            "Eighteen", "Nineteen"]
+    tens = ["", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"]
